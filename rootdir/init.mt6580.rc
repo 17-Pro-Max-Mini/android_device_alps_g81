@@ -1,0 +1,19 @@
+# Device-specific additions loaded by the generic Lineage init.rc.
+
+import /init.cdfinger.rc
+
+# Stock vendor/build.prop disables SurfaceFlinger backpressure during post-fs.
+# Restore normal frame pacing after vendor properties are loaded and before
+# SurfaceFlinger starts as a core service.
+on late-fs
+    setprop debug.sf.disable_backpressure 0
+
+# The vendor GPS driver creates these sysfs nodes when gps_drv.ko is loaded.
+# The stock vendor init runs its chown before that load, so mnld otherwise
+# starts as gps but cannot access the controls and never reports a fix.
+on property:gps_drv.ko=1
+    chown gps gps /sys/class/gpsdrv/gps/pwrctl
+    chown gps gps /sys/class/gpsdrv/gps/suspend
+    chown gps gps /sys/class/gpsdrv/gps/state
+    chown gps gps /sys/class/gpsdrv/gps/pwrsave
+    chown gps gps /sys/class/gpsdrv/gps/status

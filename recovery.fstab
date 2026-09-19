@@ -1,0 +1,8 @@
+# block device  mount point  fs type  mount flags  fs_mgr flags
+/dev/block/platform/mtk-msdc.0/11120000.msdc0/by-name/system /system ext4 ro wait
+/dev/block/platform/mtk-msdc.0/11120000.msdc0/by-name/vendor /vendor ext4 ro wait
+/dev/block/platform/mtk-msdc.0/11120000.msdc0/by-name/userdata /data f2fs noatime,nosuid,nodev,discard wait,check,formattable,resize,encryptable=/dev/block/platform/mtk-msdc.0/11120000.msdc0/by-name/metadata
+/dev/block/platform/mtk-msdc.0/11120000.msdc0/by-name/cache /cache ext4 noatime,nosuid,nodev,noauto_da_alloc,discard wait,check
+/dev/block/platform/mtk-msdc.0/11120000.msdc0/by-name/boot /boot emmc defaults defaults
+/dev/block/platform/mtk-msdc.0/11120000.msdc0/by-name/recovery /recovery emmc defaults defaults
+/dev/block/platform/mtk-msdc.0/11120000.msdc0/by-name/para /misc emmc defaults defaults

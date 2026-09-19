@@ -1,0 +1,4 @@
+#!/bin/sh
+
+add_lunch_combo omni_g81-eng
+add_lunch_combo lineage_g81-user

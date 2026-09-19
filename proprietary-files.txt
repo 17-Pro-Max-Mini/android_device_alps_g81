@@ -1,0 +1,6 @@
+# Input layout for extract-files.sh. The source root is a locally retained,
+# authorized stock extraction and is never part of this public repository.
+# source relative to input root : destination relative to vendor/alps/g81
+kernel:proprietary/kernel
+vendor.img:proprietary/vendor.img
+system/lib/:proprietary/system/lib/

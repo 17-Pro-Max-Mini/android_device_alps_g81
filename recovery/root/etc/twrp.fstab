@@ -1,0 +1,16 @@
+# TWRP mount point  fs type  block device  flags
+/system         ext4    /dev/block/platform/mtk-msdc.0/11120000.msdc0/by-name/system       flags=display="System";backup=1;wipeingui
+/system_image   emmc    /dev/block/platform/mtk-msdc.0/11120000.msdc0/by-name/system       flags=display="System Image";backup=1;flashimg=1
+/vendor         ext4    /dev/block/platform/mtk-msdc.0/11120000.msdc0/by-name/vendor       flags=display="Vendor";backup=1;wipeingui
+/vendor_image   emmc    /dev/block/platform/mtk-msdc.0/11120000.msdc0/by-name/vendor       flags=display="Vendor Image";backup=1;flashimg=1
+/data           f2fs    /dev/block/platform/mtk-msdc.0/11120000.msdc0/by-name/userdata     flags=display="Data";backup=1;wipeingui;formattable;encryptable=/dev/block/platform/mtk-msdc.0/11120000.msdc0/by-name/metadata
+/cache          ext4    /dev/block/platform/mtk-msdc.0/11120000.msdc0/by-name/cache        flags=display="Cache";backup=1;wipeingui;wipeduringfactoryreset
+
+/boot           emmc    /dev/block/platform/mtk-msdc.0/11120000.msdc0/by-name/boot         flags=display="Boot";backup=1;flashimg=1
+/recovery       emmc    /dev/block/platform/mtk-msdc.0/11120000.msdc0/by-name/recovery     flags=display="Recovery";backup=1;flashimg=1
+/logo           emmc    /dev/block/platform/mtk-msdc.0/11120000.msdc0/by-name/logo         flags=display="Logo";backup=1;flashimg=1
+
+/metadata       emmc    /dev/block/platform/mtk-msdc.0/11120000.msdc0/by-name/metadata     flags=display="Metadata";backup=1
+
+/external_sd    auto    /dev/block/mmcblk1p1                                              /dev/block/mmcblk1 flags=display="MicroSD";storage;wipeingui;removable
+/usb_otg        auto    /dev/block/sda1                                                   /dev/block/sda flags=display="USB OTG";storage;wipeingui;removable

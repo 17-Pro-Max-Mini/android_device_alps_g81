@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The panel has no hardware Back/Home/Recents keys. -->
+    <bool name="config_showNavigationBar">true</bool>
+</resources>

@@ -1,0 +1,5 @@
+on post-fs-data
+    # Preserve the stock MTK boot-region aliases. They are not Android A/B
+    # slots; they refer to the two eMMC boot regions containing preloaders.
+    symlink /dev/block/mmcblk0boot0 /dev/block/platform/mtk-msdc.0/11120000.msdc0/by-name/preloader_a
+    symlink /dev/block/mmcblk0boot1 /dev/block/platform/mtk-msdc.0/11120000.msdc0/by-name/preloader_b
