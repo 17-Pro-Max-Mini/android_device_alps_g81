@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 5 physical pixels of extra edge clearance at the panel's 200 dpi. -->
+    <dimen name="status_bar_padding_start">12dp</dimen>
+    <dimen name="status_bar_padding_end">12dp</dimen>
+</resources>
