@@ -1,3 +1,6 @@
 # G81 physical shutter key: raw Linux KEY_F8 (66) acts as Android CAMERA.
-# PhoneWindowManager's camera-launch path then handles long press/release.
+# Keep the keypad's hardware volume and power keys in the device-specific map.
 key 66 CAMERA
+key 114 VOLUME_DOWN
+key 115 VOLUME_UP
+key 116 POWER
