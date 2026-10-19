@@ -13,3 +13,8 @@ See android_manifest/g81-build and its pinned release XML for setup and build.
 The stable Android 10 phone uses density 192 as a user override; ROM density
 200 remains unchanged in this preservation release. No new display tuning or
 binary substitutions were made just to prepare the PC-format backup.
+
+The device-local releasetools hook includes the exact matching vendor image
+in full/incremental OTA packages. Without this hook, the platform skips the
+prebuilt vendor because target-files contains IMAGES/vendor.img but no VENDOR/.
+The updater accepts both g81 and the stock board name, without removing device assertions.

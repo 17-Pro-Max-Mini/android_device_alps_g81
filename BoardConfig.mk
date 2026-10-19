@@ -101,3 +101,8 @@ ALLOW_MISSING_DEPENDENCIES := true
 
 # MTK legacy driver: expose a single HIDL mode for STA+AP/P2P instead of firmware-path switching.
 WIFI_HIDL_FEATURE_DUAL_INTERFACE := true
+
+# Install the pinned vendor prebuilt even without a generated VENDOR/ tree.
+TARGET_RELEASETOOLS_EXTENSIONS := $(DEVICE_PATH)
+# Accept the canonical ROM name and the original stock/TWRP board identity.
+TARGET_OTA_ASSERT_DEVICE := g81,g81em1_o_xc6_l10_17promax
