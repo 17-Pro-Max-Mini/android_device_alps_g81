@@ -98,3 +98,8 @@ TW_NO_CPU_TEMP := true
 TW_REBOOT_RECOVERY := true
 
 ALLOW_MISSING_DEPENDENCIES := true
+
+# Install the pinned vendor prebuilt even without a generated VENDOR/ tree.
+TARGET_RELEASETOOLS_EXTENSIONS := $(DEVICE_PATH)
+# Accept the canonical ROM name and the original stock/TWRP board identity.
+TARGET_OTA_ASSERT_DEVICE := g81,g81em1_o_xc6_l10_17promax
