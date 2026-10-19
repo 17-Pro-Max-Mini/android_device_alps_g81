@@ -1,12 +1,11 @@
 # Device-specific additions loaded by the generic Lineage init.rc.
 
-import /init.cdfinger.rc
-
 # Stock vendor/build.prop disables SurfaceFlinger backpressure during post-fs.
 # Restore normal frame pacing after vendor properties are loaded and before
-# SurfaceFlinger starts as a core service.
+# SurfaceFlinger starts as a core service; keep vendor EGL backpressure disabled.
 on late-fs
-    setprop debug.sf.disable_backpressure 0
+    setprop debug.sf.disable_backpressure 1
+    setprop ril.mtk 1
 
 # The vendor GPS driver creates these sysfs nodes when gps_drv.ko is loaded.
 # The stock vendor init runs its chown before that load, so mnld otherwise
@@ -17,3 +16,102 @@ on property:gps_drv.ko=1
     chown gps gps /sys/class/gpsdrv/gps/state
     chown gps gps /sys/class/gpsdrv/gps/pwrsave
     chown gps gps /sys/class/gpsdrv/gps/status
+
+# The MTK WLAN netdev is created only after both WMT and wlan_drv.ko are ready.
+# The vendor connectivity rc previously wrote on boot, before /dev/wmtWifi
+# existed, leaving the kernel driver loaded but wlan0 absent after reboot.
+on property:wlan_drv.ko=1
+    write /dev/wmtWifi 1
+
+# The framework powers the legacy driver off without unloading wlan_drv.ko.
+# Reset the load marker and repeat the WMT write on the next Wi-Fi enable so
+# a disable/enable cycle cannot leave wlan0 permanently absent.
+on property:wlan.driver.status=unloaded
+    setprop wlan_drv.ko 0
+
+on property:wlan.driver.status=ok
+    setprop wlan_drv.ko 1
+    write /dev/wmtWifi 1
+
+on property:init.svc.wpa_supplicant=running
+    write /dev/wmtWifi 1
+    start wifi_legacy_poweron
+
+# The legacy HAL can start supplicant before the MTK netdev power-on write is
+# effective. A short init-owned delay retries the write after that transition.
+service wifi_legacy_poweron /system/bin/sleep 1
+    class core
+    user root
+    oneshot
+    seclabel u:r:init:s0
+
+on property:init.svc.wifi_legacy_poweron=stopped
+    setprop wlan_drv.ko 1
+    write /dev/wmtWifi 1
+
+# The stock MTK framework expects this boost cpuset to exist.  The generic
+# Lineage init creates and mounts /dev/cpuset before late-init is dispatched.
+on late-init
+    mkdir /dev/cpuset/foreground/boost
+    copy /dev/cpuset/cpus /dev/cpuset/foreground/boost/cpus
+    copy /dev/cpuset/mems /dev/cpuset/foreground/boost/mems
+    chown system system /dev/cpuset/foreground/boost
+    chown system system /dev/cpuset/foreground/boost/tasks
+    chmod 0664 /dev/cpuset/foreground/boost/tasks
+# Do not power on WMT from the wmt_chrdev_wifi.ko edge.  The vendor
+# init.wlan_drv.rc loads wlan_drv.ko on this edge first and publishes
+# wlan_drv.ko=1 only after insmod returns.  Powering up here races that load,
+# registers IRQ 187 twice, and can panic in wlanRemove/kalPerMonDestroy.
+# The wlan_drv.ko=1 and wlan.driver.status=ok actions above are the only
+# boot-time WMT power-on edges.
+
+
+# Stock Oreo hostapd runs in the legacy hostapd domain, which can write
+# wifi_data_file and hostapd_socket (not Android 10 hostapd_data_file).
+# Prepare hostapd data/control directories and labels before it is started.
+# hostapd removes an empty ctrl directory at shutdown. Keep a sentinel there
+# so a later AP start inherits the intended hostapd_socket directory label.
+on post-fs-data
+    mkdir /data/vendor/wifi 0770 wifi wifi
+    mkdir /data/vendor/wifi/hostapd 0770 wifi wifi
+    mkdir /data/vendor/wifi/hostapd/sockets 0770 wifi wifi
+    mkdir /data/vendor/wifi/hostapd/ctrl 0770 wifi wifi
+    chown wifi wifi /data/vendor/wifi/hostapd
+    chown wifi wifi /data/vendor/wifi/hostapd/sockets
+    chown wifi wifi /data/vendor/wifi/hostapd/ctrl
+    chmod 0770 /data/vendor/wifi/hostapd
+    chmod 0770 /data/vendor/wifi/hostapd/sockets
+    chmod 0770 /data/vendor/wifi/hostapd/ctrl
+    exec -- /system/bin/toybox touch /data/vendor/wifi/hostapd/ctrl/.keep
+    chown root root /data/vendor/wifi/hostapd/ctrl/.keep
+    chmod 0444 /data/vendor/wifi/hostapd/ctrl/.keep
+    exec -- /system/bin/toybox chcon u:object_r:wifi_data_file:s0 /data/vendor/wifi/hostapd
+    exec -- /system/bin/toybox chcon u:object_r:hostapd_socket:s0 /data/vendor/wifi/hostapd/sockets
+    exec -- /system/bin/toybox chcon u:object_r:hostapd_socket:s0 /data/vendor/wifi/hostapd/ctrl
+    exec -- /system/bin/toybox chcon u:object_r:hostapd_socket:s0 /data/vendor/wifi/hostapd/ctrl/.keep
+
+# The legacy MTK PQ service reads persistent properties after its HIDL
+# registration.  Re-apply the Android-10-compatible neutral values at boot
+# and after boot completion so stale /data properties cannot re-enable HDR,
+# adaptive dynamic luminance, sharpening, or ultra-resolution processing.
+on boot
+    setprop persist.sys.pq.hdr.en 0
+    setprop persist.sys.pq.mdp.color.dbg 0
+    setprop persist.sys.pq.ultrares.en 0
+    setprop persist.sys.pq.iso.shp.en 0
+    setprop persist.sys.pq.adl.idx 0
+    setprop persist.sys.pq.shp.idx 0
+    setprop persist.sys.pq.mdp.color.idx 0
+    setprop debug.pq.dshp.en 0
+    setprop debug.pq.shp.en 0
+
+on property:sys.boot_completed=1
+    setprop persist.sys.pq.hdr.en 0
+    setprop persist.sys.pq.mdp.color.dbg 0
+    setprop persist.sys.pq.ultrares.en 0
+    setprop persist.sys.pq.iso.shp.en 0
+    setprop persist.sys.pq.adl.idx 0
+    setprop persist.sys.pq.shp.idx 0
+    setprop persist.sys.pq.mdp.color.idx 0
+    setprop debug.pq.dshp.en 0
+    setprop debug.pq.shp.en 0

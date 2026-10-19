@@ -1,0 +1,6 @@
+service netdagent /vendor/bin/netdagent
+    setenv LD_LIBRARY_PATH /vendor/lib/ril27:/vendor/lib:/system/lib
+    class late_start
+    #socket netdagent stream 0660 root system
+    user system
+    group net_admin net_raw system misc

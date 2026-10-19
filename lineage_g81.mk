@@ -2,6 +2,11 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/go_defaults.mk)
 $(call inherit-product, vendor/lineage/config/common_full_phone.mk)
 $(call inherit-product, device/alps/g81/device.mk)
+# Pull the generated proprietary system-side libraries and Wi-Fi HIDL
+# interface modules into the product.  The legacy vendor wpa_supplicant is
+# linked against these exact SONAMEs; omitting this makefile leaves the
+# supplicant binary unable to link at runtime.
+$(call inherit-product-if-exists, vendor/alps/g81/g81-vendor.mk)
 
 # common_full_phone.mk already supplies TrebuchetQuickStep, which is required
 # for Android 10's gesture navigation and overview gesture handling.

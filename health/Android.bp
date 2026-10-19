@@ -1,0 +1,10 @@
+// MT6580 legacy sysfs uses batt_vol/batt_temp rather than voltage_now/temp.
+cc_binary {
+    name: "android.hardware.health@2.0-service.g81",
+    defaults: ["android.hardware.health@2.0-service_defaults"],
+    vendor: true,
+    relative_install_path: "hw",
+    init_rc: ["android.hardware.health@2.0-service.g81.rc"],
+    srcs: ["HealthService.cpp"],
+    overrides: ["android.hardware.health@2.0-service"],
+}

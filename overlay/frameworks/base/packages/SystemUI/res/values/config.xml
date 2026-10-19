@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Avoid per-child shadow rendering on the Mali-400 notification path. -->
+    <bool name="config_enableShadowOnChildNotifications">false</bool>
+    <!-- The LCD panel does not need the OLED navigation-bar dim animation. -->
+    <bool name="config_navigation_bar_enable_auto_dim_no_visible_wallpaper">false</bool>
+</resources>

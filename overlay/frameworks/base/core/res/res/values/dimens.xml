@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Match the standard Oreo software navigation bar size. -->
-    <dimen name="navigation_bar_height">48dp</dimen>
-    <dimen name="navigation_bar_height_landscape">48dp</dimen>
+    <dimen name="navigation_bar_height">24dp</dimen>
+    <dimen name="navigation_bar_height_landscape">24dp</dimen>
 </resources>

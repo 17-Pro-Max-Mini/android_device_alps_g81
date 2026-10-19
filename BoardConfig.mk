@@ -1,5 +1,9 @@
 DEVICE_PATH := device/alps/g81
 
+# Legacy vendor manifest is the VINTF source on this non-Treble MTK device.
+DEVICE_MANIFEST_FILE := $(DEVICE_PATH)/vendor_manifest.xml
+# The legacy MTK CIL and matching compiled policy ship in the prebuilt vendor image.
+
 # Architecture: MT6580 is a 32-bit Cortex-A7 platform.
 TARGET_ARCH := arm
 TARGET_ARCH_VARIANT := armv7-a-neon
@@ -17,7 +21,10 @@ MALLOC_SVELTE := true
 
 # Platform and bootloader.
 TARGET_BOARD_PLATFORM := mt6580
-TARGET_BOOTLOADER_BOARD_NAME := g81em1_o_xc6_l10_17promax
+
+# The MT6580 kernel rejects netd's optional FTP/PPTP CT helper rules.
+TARGET_IGNORES_FTP_PPTP_CONNTRACK_FAILURE := true
+TARGET_BOOTLOADER_BOARD_NAME := g81
 TARGET_NO_BOOTLOADER := true
 
 BOARD_HAS_MTK_HARDWARE := true
@@ -28,15 +35,10 @@ MTK_HARDWARE := true
 # against its HWC2 path instead of the legacy HWC1 fallback.
 TARGET_USES_HWC2 := true
 
-# The checked-out private vendor tree supplies the verified stock kernel and
-# vendor image. Keep the stock kernel byte-for-byte intact for this port.
--include vendor/alps/g81/BoardConfigVendor.mk
-
-ifeq ($(strip $(TARGET_PREBUILT_KERNEL)),)
-$(error Missing vendor/alps/g81. Sync the private proprietary_vendor_alps_g81 repository or run extract-files.sh.)
-endif
-
+# Stock recovery and boot use the same zImage. Keep it byte-for-byte intact for
+# the first recovery bring-up.
 BOARD_KERNEL_IMAGE_NAME := zImage
+TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilt/kernel
 BOARD_KERNEL_BASE := 0x80000000
 BOARD_KERNEL_OFFSET := 0x00008000
 BOARD_RAMDISK_OFFSET := 0x04000000
@@ -56,6 +58,7 @@ BOARD_SYSTEMIMAGE_PARTITION_SIZE := 2147483648
 BOARD_VENDORIMAGE_PARTITION_SIZE := 419430400
 BOARD_CACHEIMAGE_PARTITION_SIZE := 117440512
 BOARD_USERDATAIMAGE_PARTITION_SIZE := 12739674112
+BOARD_PREBUILT_VENDORIMAGE := $(DEVICE_PATH)/prebuilt/vendor.img
 
 TARGET_USERIMAGES_USE_EXT4 := true
 TARGET_USERIMAGES_USE_F2FS := true
@@ -86,9 +89,6 @@ TW_EXTRA_LANGUAGES := false
 TW_EXCLUDE_BASH := true
 TW_EXCLUDE_NANO := true
 TW_EXCLUDE_TZDATA := true
-# Python is not used by the supported recovery workflows. Excluding the
-# interpreter preserves several MiB of recovery-partition headroom.
-TW_EXCLUDE_PYTHON := true
 TW_USE_TOOLBOX := true
 
 TW_INCLUDE_CRYPTO := true
@@ -98,3 +98,6 @@ TW_NO_CPU_TEMP := true
 TW_REBOOT_RECOVERY := true
 
 ALLOW_MISSING_DEPENDENCIES := true
+
+# MTK legacy driver: expose a single HIDL mode for STA+AP/P2P instead of firmware-path switching.
+WIFI_HIDL_FEATURE_DUAL_INTERFACE := true

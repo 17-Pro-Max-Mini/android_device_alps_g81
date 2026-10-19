@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Settings inflates SetupDesign footer buttons outside a SetupWizard theme.
+         The base theme is empty upstream: retain its parent and add only the
+         missing boolean, without replacing status/navigation/color settings. -->
+    <style name="Theme.SettingsBase" parent="@android:style/Theme.DeviceDefault.Settings">
+        <item name="sudButtonAllCaps">true</item>
+    </style>
+</resources>

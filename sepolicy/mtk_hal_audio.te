@@ -1,0 +1,3 @@
+# The MTK HIDL stream dump receives an audioserver-owned pipe over Binder.
+# Allow only diagnostic output to that pipe; do not grant app/debugfs access.
+allow mtk_hal_audio audioserver:fifo_file write;
